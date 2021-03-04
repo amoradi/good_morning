@@ -13,7 +13,7 @@ cryptovest.aaronmoradi.com
     - show the whole (total worth in $)
     - run a chron job every day graph the porfolio.
       - would be nice to know TOT + BTC (10%) VET (12%) etc.
-
+  - use CW's rest API: https://docs.cryptowat.ch/rest-api/
 - what's the latest vid content from bitboy/alt coin daily
 
 Portfolio of current Crytpo holdings
