@@ -1,0 +1,10 @@
+{
+  "name": "good_morning",
+  "version": "1.0.0",
+  "description": "my morning dashboard",
+  "main": "index.js",
+  "repository": "https://github.com/amoradi/good_morning.git",
+  "author": "amoradi <moradi.aaron@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
