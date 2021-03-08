@@ -2,6 +2,8 @@
 
 Wake up and see what's up =). My morning dashboard. 
 
+`Node` `Express` `Postgres` `Swagger`
+
 ## Usage
 
 ```js
@@ -14,9 +16,6 @@ yarn start
 
 Get a flash view of your crypto holdings and portoflio over time, with latest crypto news.
 
-## Technologies Used
-
-Node, Express, Postgress, Swagger
 
 ## Future work
 
