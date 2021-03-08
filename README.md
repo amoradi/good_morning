@@ -1,4 +1,4 @@
-# good morning
+# good morning 🌞
 
 Wake up and see what's up with your holdings 💰. My morning dashboard. 
 
