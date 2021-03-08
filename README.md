@@ -3,7 +3,7 @@
 Wake up and see what's up with your holdings 💰. My morning dashboard. 
 
 
-## Usage
+## usage
 
 ```js
 
@@ -11,17 +11,17 @@ yarn start
 
 ```
 
-## Features
+## features
 
 Get a flash view of your crypto holdings and portoflio over time, with latest crypto news.
 
 
-## Future work
+## future work
 
 - Chart holdings with pie chart alternatives
   - bump
   - waffle
 - add other asset classes in porfolio, but first make some dough to invest to pull it off
 
-## Built With
+## built with
 `Node` `Express` `Postgres` `Swagger`
