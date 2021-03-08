@@ -1,8 +1,7 @@
 # good morning
 
-Wake up and see what's up =). My morning dashboard. 
+Wake up and see what's up with your holdings 💰. My morning dashboard. 
 
-`Node` `Express` `Postgres` `Swagger`
 
 ## Usage
 
@@ -23,3 +22,6 @@ Get a flash view of your crypto holdings and portoflio over time, with latest cr
   - bump
   - waffle
 - add other asset classes in porfolio, but first make some dough to invest to pull it off
+
+## Built With
+`Node` `Express` `Postgres` `Swagger`
