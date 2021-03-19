@@ -1,5 +1,11 @@
-// imports
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const express = require('express');
+const flash = require('connect-flash');
+const passport = require('passport');
+const session = require('express-session');
 
+const setupPassport = require('./config/setup_passport');
 
 // # middleware
 //
@@ -26,13 +32,14 @@
 // /create-account
 // 
 
-const express = require('express');
-const app = express();
-
+//// SETUP
 const { port = 3000 } = process.env;
+const app = express();
+setupPassport();
 
-// assumes 'id=form'
-const scriptTag = (onSubmit) => {
+//// HELPERS
+// attach submit callback to form id='form'
+const onFormSubmit = (onSubmit) => {
   return `<script>
     const form = document.getElementById("form");
 
@@ -44,6 +51,28 @@ const scriptTag = (onSubmit) => {
   </script>`;
 }
 
+//// AUTHENTICATION MIDDLEWARE
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({
+  secret: ">>>!makeITpayDUDE##!<<<", // each client session is encrypted
+  resave: true, // session will update even when it hasn't been modified
+  saveUninitialized: true // resets uninitialized sessions
+}));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+//// GENERAL PASSPORT MIDDLEWARE
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  res.locals.errors = req.flash("error");
+  res.locals.infos = req.flash("info");
+  next();
+});
+
+//// ROUTES
+
 // login
 // - login into app with username and pw
 // - username input/email input, pw input, forgot pw? link, create account link
@@ -52,17 +81,28 @@ app.get('/login', (req, res) => {
   // if already authenticated, redirect to /
   // else serve login form
   res.send(`
-    <form id="form">
-      <input type="text" placeholder="username or email"></input>
-      <input type="password" placeholder="password"></input>
+    <form id="form" action="/login" method="post">
+      <input type="text" placeholder="username" name="username"></input>
+      <input type="password" placeholder="password" name="password"></input>
       <input type="submit" value="Submit">
     </form>
 
-    ${scriptTag(`() => {
+    ${onFormSubmit(`() => {
       console.log('POST to auth service...')
     }`)}
   `);
 });
+
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect("/login");
+});
+
+app.post('/login', passport.authenticate("login", {
+  successRedirect: "/",
+  failureRedirect: "/login",
+  failureFlash: true
+}))
 
 // create account
 // - /create-account
@@ -77,12 +117,15 @@ app.get('/create-account', (req, res) => {
     <input type="submit" value="Submit">
   </form>
 
-  ${scriptTag(`() => {
+  ${onFormSubmit(`() => {
     console.log('POST to user service: create ...')
   }`)}
 `);
 });
 
+
+//// ROUTES BEHIND AUTHENTICATION BOUNDARY 
+ 
 // reset pw <logged-in>
 // - /reset-password
 // - update password...bc you forgot it
@@ -97,7 +140,7 @@ app.get('/reset-password', (req, res) => {
     <input type="submit" value="Submit">
   </form>
 
-  ${scriptTag(`() => {
+  ${onFormSubmit(`() => {
     console.log('POST to user service: reset pw ...')
   }`)}
 `);
@@ -117,7 +160,7 @@ app.get('/profile', (req, res) => {
     <input type="submit" value="Submit">
   </form>
 
-  ${scriptTag(`() => {
+  ${onFormSubmit(`() => {
     console.log('POST to user service: update username, email, pw ...')
   }`)}
 `);
@@ -146,14 +189,14 @@ app.get('/edit', (req, res) => {
     <div>remove holding link + button confirm, edit assets amt input + button save</div>
   </form>
 
-  ${scriptTag(`() => {
+  ${onFormSubmit(`() => {
     console.log('POST to holdings service: CRUD ...')
   }`)}
 `);
 });
 
 
-// start the server ....
+//// START SERVER
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`)
 });
