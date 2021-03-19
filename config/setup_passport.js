@@ -1,6 +1,9 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
+// GOOD WATCHING READING: https://www.youtube.com/watch?v=U6OcC0yq1CE
+// Server sessions vs JWT
+
 const fakeDb = [
   {
     email: 'moradi.aaron@gmail.com',
