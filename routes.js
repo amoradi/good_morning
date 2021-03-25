@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const fakeDb = require('./db');
 
 // # routes
 // 
@@ -18,6 +19,12 @@ const passport = require('passport');
 // /reset-password
 // /create-account
 // 
+
+// TODO:
+// - flash isn't working. does that mean i need some HTML elements for it
+// to hook into????
+// - route tests?
+// - routers for each API???: User API. Holdings API?
 
 const router = express.Router();
 
@@ -48,19 +55,22 @@ router.use((req, res, next) => {
 // - username input/email input, pw input, forgot pw? link, create account link
 // - users service
 router.get('/login', (req, res) => {
-  // if already authenticated, redirect to /
-  // else serve login form
-  res.send(`
-    <form id="form" action="/login" method="post">
-      <input type="text" placeholder="username" name="username"></input>
-      <input type="password" placeholder="password" name="password"></input>
-      <input type="submit" value="Submit">
-    </form>
+  if (req.isAuthenticated() /* a passport fn */) {
+    res.redirect('/');
+  } else {
+    // else serve login form
+    res.send(`
+      <form id="form" action="/login" method="post">
+        <input type="text" placeholder="username" name="username"></input>
+        <input type="password" placeholder="password" name="password"></input>
+        <input type="submit" value="Submit">
+      </form>
+    `);
+  }
 
-    ${onFormSubmit(`() => {
-      console.log('POST to auth service...')
-    }`)}
-  `);
+  // ${onFormSubmit(`() => {
+  //   console.log('POST to auth service...')
+  // }`)}
 });
 
 router.get('/logout', (req, res) => {
@@ -95,10 +105,37 @@ router.get('/create-account', (req, res) => {
 
 
 router.post('/user/create', (req, res, next) => {
-  // is a user with that username doesn't exist
+  // username is unique
   // and the email is uniuqe
   // save the user to the DB
   // then redirect to /login
+  const username = res.body.username;
+  const password = res.body.password;
+
+  const foundUser = fakeDb.find((rec) => rec.username === username);
+
+  if (foundUser) {
+    req.flash("error", "User already exists");
+    return res.redirect("/create-account");
+  }
+
+  // success
+  fakeDb.push(
+    {
+      email: '',
+      id: '',
+      password, // TODO: salt
+      username,
+    }
+  );
+
+  passport.authenticate("login", passport.authenticate("login", {
+    successRedirect: "/",
+    failureRedirect: "/create-account",
+    failureFlash: true
+  }));
+
+
 
   // else redirect back to /create-accout with
   // flash messages: username already exists. email alreading exists
@@ -107,13 +144,25 @@ router.post('/user/create', (req, res, next) => {
 
 
 //// ROUTES BEHIND AUTHENTICATION BOUNDARY 
+
+// authentication middleware. protect routes with this.
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated() /* a passport fn */) {
+    next();
+  } else {
+    req.flash("info", "You must be logged in to see this page.");
+    res.redirect('./login');
+  }
+}
+
+// routes: /, edit, reset-password, profile
  
 // reset pw <logged-in>
 // - /reset-password
 // - update password...bc you forgot it
 // - insert new pw input, confirmation input... do it again.
 // - users service
-router.get('/reset-password', (req, res) => {
+router.get('/reset-password', isAuthenticated, (req, res) => {
   res.send(`
   <form id="form">
     <input type="text" placeholder="6 digit passcode"></input>
@@ -133,7 +182,7 @@ router.get('/reset-password', (req, res) => {
 // - see profile data: username, email, pw and link to edit them
 // - username, emial, pw inputs, edit email link, edit pw link
 // - users service
-router.get('/profile', (req, res) => {
+router.get('/profile', isAuthenticated, (req, res) => {
   res.send(`
   <form id="form">
     <input type="text" placeholder="username"></input>
@@ -154,7 +203,7 @@ router.get('/profile', (req, res) => {
 // - current holdings, holdings over time and aggregate. Hard-coded: news, weather goals
 // - edit assets link, log out link, profile link
 // - holdings service
-router.get('/', (req, res) => {
+router.get('/', isAuthenticated, (req, res) => {
   res.send(`
   <div>my holdings...</div>
 `);
@@ -165,7 +214,7 @@ router.get('/', (req, res) => {
 // - add/remove/edit assets
 // - add holding form, remove holding link + button confirm, edit assets amt input + button save
 // - holdings service
-router.get('/edit', (req, res) => {
+router.get('/edit', isAuthenticated, (req, res) => {
   res.send(`
   <form id="form">
     <div>remove holding link + button confirm, edit assets amt input + button save</div>

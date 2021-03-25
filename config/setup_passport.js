@@ -1,17 +1,9 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const fakeDb = require('../db');
 
 // GOOD WATCHING READING: https://www.youtube.com/watch?v=U6OcC0yq1CE
 // Server sessions vs JWT
-
-const fakeDb = [
-  {
-    email: 'moradi.aaron@gmail.com',
-    id: 'testId',
-    password: 'texas',
-    username: 'aaronm',
-  }
-];
 
 // Used to serialize and deserialize Users to and from the session
 //
@@ -32,7 +24,7 @@ module.exports = () => {
     });
 
     if (foundUser) {
-      done(null, user);
+      done(null, foundUser);
     } else {
       done(null, false, { message: "User not found for ID: " + id });
     }
