@@ -80,7 +80,7 @@ router.post('/login', passport.authenticate("login", {
 // - username, email, pw inputs
 router.get('/create-account', (req, res) => {
   res.send(`
-  <form id="form">
+  <form id="form" action="/users/create" method="post">
     <input type="text" placeholder="username"></input>
     <input type="text" placeholder="email"></input>
     <input type="password" placeholder="password"></input>
@@ -92,6 +92,18 @@ router.get('/create-account', (req, res) => {
   }`)}
 `);
 });
+
+
+router.post('/user/create', (req, res, next) => {
+  // is a user with that username doesn't exist
+  // and the email is uniuqe
+  // save the user to the DB
+  // then redirect to /login
+
+  // else redirect back to /create-accout with
+  // flash messages: username already exists. email alreading exists
+});
+
 
 
 //// ROUTES BEHIND AUTHENTICATION BOUNDARY 
