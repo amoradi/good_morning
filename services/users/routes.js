@@ -1,12 +1,23 @@
 const express = require('express');
 const passport = require('passport');
+const isAuthorized = require('../auth/isAuthorized');
 const fakeDb = require('../../db');
 
 const router = express.Router();
 
+router.get('/users/:username', isAuthorized, (req, res) => {
+  const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
+
+  // return user object
+});
+
+router.put('/users/:username/', isAuthorized, (req, res) => {
+
+});
+
 router.post('/users/create', (req, res) => {
-  const username = res.body.username;
-  const password = res.body.password;
+  const username = req.body.username;
+  const password = req.body.password;
   const foundUser = fakeDb.find((rec) => rec.username === username);
 
   if (foundUser) {
@@ -29,7 +40,5 @@ router.post('/users/create', (req, res) => {
     failureRedirect: "/signup",
     failureFlash: true
 }));
-
-// TODO: POST users/update
 
 module.exports = router;
