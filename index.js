@@ -1,11 +1,12 @@
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const express = require('express');
 const flash = require('connect-flash');
 const passport = require('passport');
 const session = require('express-session');
-const routes = require("./routes");
-const setupPassport = require('./config/setup_passport');
+const pagesRoutes = require("./pageRoutes");
+const setupPassport = require('./services/auth/setup_passport');
+const authRoutes = require('./services/auth/routes');
+const usersRoutes = require('./services/users/routes');
 
 // # middleware
 //
@@ -14,15 +15,20 @@ const setupPassport = require('./config/setup_passport');
 // authentication
 // authorization
 
-//// SETUP
+// === SETUP === //
 const { port = 3000 } = process.env;
 const app = express();
+// setup passport
+// - define serialize/deserialize user methods
+// - make authentication strategy available
 setupPassport();
 
-//// AUTHENTICATION MIDDLEWARE
+// === MIDDLEWARE === //
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(session({
+  httpOnly: true,
+  sameSite: true,
+  // TODO: secure: true, // need https first
   secret: ">>>!makeITpayDUDE##!<<<", // each client session is encrypted
   resave: true, // session will update even when it hasn't been modified
   saveUninitialized: true // resets uninitialized sessions
@@ -31,10 +37,22 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-//// ROUTES
-app.use(routes);
+// set locals
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  res.locals.errors = req.flash("error");
+  res.locals.infos = req.flash("info");
+  next();
+});
 
-//// START SERVER
+// === ROUTES === //
+app.use(authRoutes);
+app.use(pagesRoutes);
+app.use(usersRoutes);
+// app.use(holdingsRoutes);
+
+
+// === START SERVER === //
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`)
 });

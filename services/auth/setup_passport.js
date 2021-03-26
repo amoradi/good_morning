@@ -1,6 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const fakeDb = require('../db');
+const fakeDb = require('../../db');
 
 // GOOD WATCHING READING: https://www.youtube.com/watch?v=U6OcC0yq1CE
 // Server sessions vs JWT
@@ -30,12 +30,7 @@ module.exports = () => {
     }
   })
 
-  // authentication steps (using a local strategy)
-  //
-  // - look for user with supplied username
-  // - if no user exists, then your user isn't authenticated, return "username does not exist"
-  // - if user does exist, compare passwords
-  // - if the passwords match, return the User, otherwise, return "invalid password"
+  // login with local strategy
   passport.use("login", new LocalStrategy(
     function(username, password, done) {
       const foundUser = fakeDb.find((rec) => rec.username === username);
