@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "nodemon index"
+    "start": "nodemon index",
+    "format": "yarn prettier --write ."
   },
   "dependencies": {
     "express": "^4.17.1",
@@ -19,6 +20,8 @@
     "connect-flash": "^0.1.1",
     "express-session": "^1.17.1",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "prettier": "^2.2.1",
+    "supertest": "^6.1.3"
   }
 }

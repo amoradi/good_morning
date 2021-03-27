@@ -1,15 +1,16 @@
-const express = require('express');
+const express = require("express");
 
-const isAuthenticated = require('./services/auth/isAuthenticated');
+const isAuthenticated = require("./services/auth/isAuthenticated");
 const router = express.Router();
 
-const flashMessage = (message) => `<p style="color:#ff0000;font-size:12px">${message}</p>`;
+const flashMessage = (message) =>
+  `<p style="color:#ff0000;font-size:12px">${message}</p>`;
 
 // === PAGES === //
 // TODO: add create account link
-router.get('/login', (req, res) => {
+router.get("/login", (req, res) => {
   if (req.isAuthenticated() /* a passport fn */) {
-    res.redirect('/');
+    res.redirect("/");
   } else {
     // else serve login form
     res.send(`
@@ -23,12 +24,12 @@ router.get('/login', (req, res) => {
   }
 });
 
-router.get('/logout', (req, res) => {
+router.get("/logout", (req, res) => {
   req.logout();
   res.redirect("/login");
 });
 
-router.get('/signup', (req, res) => {
+router.get("/signup", (req, res) => {
   res.send(`
   ${flashMessage(res.locals.errors)}
   <form id="form" action="/users/create" method="post">
@@ -43,7 +44,7 @@ router.get('/signup', (req, res) => {
 // - current holdings, holdings over time and aggregate. Hard-coded: news, weather goals
 // - edit assets link, log out link, profile link
 // - hits holdings service
-router.get('/', isAuthenticated, (req, res) => {
+router.get("/", isAuthenticated, (req, res) => {
   res.send(`
   <div>my holdings...</div>
 `);
@@ -51,7 +52,7 @@ router.get('/', isAuthenticated, (req, res) => {
 
 // edit profile and holdings...
 // add, remove holdings and change amounts
-router.get('/edit', isAuthenticated, (req, res) => {
+router.get("/edit", isAuthenticated, (req, res) => {
   res.send(`
   ${flashMessage(res.locals.errors)}
   <!-- EDIT PROFILE -->

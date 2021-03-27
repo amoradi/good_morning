@@ -1,6 +1,6 @@
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const fakeDb = require('../../db');
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const fakeDb = require("../../db");
 
 // GOOD WATCHING READING: https://www.youtube.com/watch?v=U6OcC0yq1CE
 // Server sessions vs JWT
@@ -14,11 +14,11 @@ const fakeDb = require('../../db');
 // In order to support these login sessions, Passport needs to serialize and deserialize
 // Users to and from the session.
 module.exports = () => {
-  passport.serializeUser(function(user, done) {
-    done(null, user.id)
-  })
+  passport.serializeUser(function (user, done) {
+    done(null, user.id);
+  });
 
-  passport.deserializeUser(function(id, done) {
+  passport.deserializeUser(function (id, done) {
     const foundUser = fakeDb.find((user) => {
       return user.id === id;
     });
@@ -28,11 +28,12 @@ module.exports = () => {
     } else {
       done(null, false, { message: "User not found for ID: " + id });
     }
-  })
+  });
 
   // login with local strategy
-  passport.use("login", new LocalStrategy(
-    function(username, password, done) {
+  passport.use(
+    "login",
+    new LocalStrategy(function (username, password, done) {
       const foundUser = fakeDb.find((rec) => rec.username === username);
 
       if (foundUser) {
@@ -45,7 +46,6 @@ module.exports = () => {
       } else {
         return done(null, false, { message: "Username not found" });
       }
-    }
-  ))
-}
-
+    })
+  );
+};

@@ -1,4 +1,5 @@
 # Final Back-End Project
+
 The project should be something that you are passionate about building.
 
 Think about:
@@ -19,6 +20,7 @@ goodmorning.aaronmoradi.com
 Portfolio of current Crytpo holdings
 
 Project Requirements:
+
 - [x] Build the application using Node.js and Express
 - Persist data for your application using a PostgreSQL database
   - instrument?/assets? table
@@ -36,6 +38,7 @@ Project Requirements:
 - Write unit tests for your service methods
 
 - Document your back-end API with Swagger
+
   - POST asset
   - EDIT
   - DELETE

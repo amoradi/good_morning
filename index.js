@@ -1,17 +1,17 @@
-const bodyParser = require('body-parser');
-const express = require('express');
-const flash = require('connect-flash');
-const passport = require('passport');
-const session = require('express-session');
+const bodyParser = require("body-parser");
+const express = require("express");
+const flash = require("connect-flash");
+const passport = require("passport");
+const session = require("express-session");
 const pagesRoutes = require("./pageRoutes");
-const setupPassport = require('./services/auth/setup_passport');
-const authRoutes = require('./services/auth/routes');
-const usersRoutes = require('./services/users/routes');
+const setupPassport = require("./services/auth/setup_passport");
+const authRoutes = require("./services/auth/routes");
+const usersRoutes = require("./services/users/routes");
 
 // # middleware
 //
 // security
-// - XSS, CSRF 
+// - XSS, CSRF
 // authentication
 // authorization
 
@@ -25,14 +25,16 @@ setupPassport();
 
 // === MIDDLEWARE === //
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({
-  httpOnly: true,
-  sameSite: true,
-  // TODO: secure: true, // need https first
-  secret: ">>>!makeITpayDUDE##!<<<", // each client session is encrypted
-  resave: true, // session will update even when it hasn't been modified
-  saveUninitialized: true // resets uninitialized sessions
-}));
+app.use(
+  session({
+    httpOnly: true,
+    sameSite: true,
+    // TODO: secure: true, // need https first
+    secret: ">>>!makeITpayDUDE##!<<<", // each client session is encrypted
+    resave: true, // session will update even when it hasn't been modified
+    saveUninitialized: true, // resets uninitialized sessions
+  })
+);
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -51,8 +53,7 @@ app.use(pagesRoutes);
 app.use(usersRoutes);
 // app.use(holdingsRoutes);
 
-
 // === START SERVER === //
 app.listen(port, () => {
-  console.log(`Listening on port ${port}...`)
+  console.log(`Listening on port ${port}...`);
 });
