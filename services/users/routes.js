@@ -21,16 +21,33 @@ router.delete("/users/:username", isAuthorized, (req, res) => {
   if (foundIndex > -1) {
     fakeDb.splice(foundIndex, 1);
   }
-  
-  if (foundUser) {
-    // deleted
-    res.status(200).json({ username: foundUser.username });
+
+  if (foundIndex) {
+    // return deleted username
+    res.status(200).json({ username: fakeDb[foundIndex].username });
   } else {
     res.status(404)
   }
 });
 
-router.put("/users/:username", isAuthorized, (req, res) => {});
+router.patch("/users/:username", isAuthorized, (req, res) => {
+  const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
+
+  if (foundUser) {
+    if (req.body.password) {
+      foundUser.password = req.body.password;
+    }
+
+    if (req.body.email) {
+      foundUser.email = req.body.email;
+    }
+
+    res.status(200).json({ username: foundUser.username });
+  } else {
+    res.status(404)
+  }
+
+});
 
 router.post(
   "/users/create",

@@ -58,9 +58,9 @@ app.use(usersRoutes);
 // app.use(holdingsRoutes);
 
 // === START SERVER === //
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
 
 
-module.exports = app;
+module.exports = { app, server }

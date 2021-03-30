@@ -1,11 +1,13 @@
 
 const should = require('should');
-const app = require("../../index");
+const { app, server } = require("../../index");
 const request = require("supertest");
 
-// CRUD
-// POST /create, GET /, PUT /:username, DELETE /delete/:username
 describe("users service", () => {
+  after((done) => {
+    server.close(done);
+  });
+
   describe("POST users/create", () => {
     it("should create a user", (done) => {
       request(app)
@@ -82,7 +84,19 @@ describe("users service", () => {
     describe("DELETE users/:username", () => {
       it('should redirect to / when unauthorized', (done) => {
         request(app)
-          .get('/users/aaronm')
+          .delete('/users/aaronm')
+          .expect(302)
+          .expect({})
+          .end((err) => {
+            if (err) return done(err);
+            done();
+        });
+      });
+    })
+    describe("PATCH users/:username", () => {
+      it('should redirect to / when unauthorized', (done) => {
+        request(app)
+          .patch('/users/aaronm')
           .expect(302)
           .expect({})
           .end((err) => {
