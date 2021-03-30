@@ -5,13 +5,32 @@ const fakeDb = require("../../db");
 
 const router = express.Router();
 
+// you can only GET youself
 router.get("/users/:username", isAuthorized, (req, res) => {
   const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
 
-  // return user object
+  if (foundUser) {
+    res.status(200).json({ username: foundUser.username });
+  } else {
+    res.status(404)
+  }
 });
 
-router.put("/users/:username/", isAuthorized, (req, res) => {});
+router.delete("/users/:username", isAuthorized, (req, res) => {
+  const foundIndex = fakeDb.indexOf((rec) => rec.username === req.params.username);
+  if (foundIndex > -1) {
+    fakeDb.splice(foundIndex, 1);
+  }
+  
+  if (foundUser) {
+    // deleted
+    res.status(200).json({ username: foundUser.username });
+  } else {
+    res.status(404)
+  }
+});
+
+router.put("/users/:username", isAuthorized, (req, res) => {});
 
 router.post(
   "/users/create",
@@ -19,6 +38,11 @@ router.post(
     const username = req.body.username;
     const password = req.body.password;
     const foundUser = fakeDb.find((rec) => rec.username === username);
+
+    if (username === '' || username === undefined) {
+      req.flash("error", "Username must be at least 1 character");
+      return res.redirect("/signup");
+    }
 
     if (foundUser) {
       req.flash("error", "User already exists");
@@ -32,7 +56,10 @@ router.post(
       password, // TODO: salt
       username,
     });
+
+    res.status(201).json({ username })
   },
+
   passport.authenticate("login", {
     successRedirect: "/",
     failureRedirect: "/signup",

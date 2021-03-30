@@ -3,6 +3,7 @@ const express = require("express");
 const flash = require("connect-flash");
 const passport = require("passport");
 const session = require("express-session");
+const cookieParser = require("cookie-parser");
 const pagesRoutes = require("./pageRoutes");
 const setupPassport = require("./services/auth/setup_passport");
 const authRoutes = require("./services/auth/routes");
@@ -18,13 +19,16 @@ const usersRoutes = require("./services/users/routes");
 // === SETUP === //
 const { port = 3000 } = process.env;
 const app = express();
+
 // setup passport
 // - define serialize/deserialize user methods
 // - make authentication strategy available
 setupPassport();
 
 // === MIDDLEWARE === //
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cookieParser());
 app.use(
   session({
     httpOnly: true,
@@ -57,3 +61,6 @@ app.use(usersRoutes);
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
+
+
+module.exports = app;
