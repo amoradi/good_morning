@@ -1,5 +1,4 @@
-
-const should = require('should');
+const should = require("should");
 const { app, server } = require("../../index");
 const request = require("supertest");
 
@@ -11,51 +10,51 @@ describe("users service", () => {
   describe("POST users/create", () => {
     it("should create a user", (done) => {
       request(app)
-        .post('/users/create')
+        .post("/users/create")
         .send({ username: "foo", password: "french" })
-        .set('Accept', 'application/json')
-        .expect('Content-Type', /json/)
+        .set("Accept", "application/json")
+        .expect("Content-Type", /json/)
         .expect(201)
         .expect({ username: "foo" })
         .end((err) => {
-            if (err) return done(err);
-            done();
+          if (err) return done(err);
+          done();
         });
     });
 
     it("should not create a user when username is invalid and redirect to /signup", (done) => {
       // empty string username
       request(app)
-        .post('/users/create')
+        .post("/users/create")
         .send({ username: "", password: "french" })
-        .set('Accept', 'application/json')
+        .set("Accept", "application/json")
         .expect(302)
         .end((err, res) => {
-            should(res.headers.location).equal('/signup');
-            if (err) return done(err);
+          should(res.headers.location).equal("/signup");
+          if (err) return done(err);
         });
 
       // undefined username
       request(app)
-        .post('/users/create')
+        .post("/users/create")
         .send({ username: undefined, password: "french" })
-        .set('Accept', 'application/json')
+        .set("Accept", "application/json")
         .expect(302)
         .end((err, res) => {
-            should(res.headers.location).equal('/signup');
-            if (err) return done(err);
-            done();
+          should(res.headers.location).equal("/signup");
+          if (err) return done(err);
+          done();
         });
     });
 
     it("should not create a user when it already exists and redirect to /signup", (done) => {
       request(app)
-        .post('/users/create')
+        .post("/users/create")
         .send({ username: "foo", password: "french" })
-        .set('Accept', 'application/json')
+        .set("Accept", "application/json")
         .expect(302)
         .end((err, res) => {
-          should(res.headers.location).equal('/signup');
+          should(res.headers.location).equal("/signup");
           if (err) return done(err);
           done();
         });
@@ -70,40 +69,40 @@ describe("users service", () => {
   // to be fair, I did try to quickly stub-out the auth functions in sinon and to no avail.
   describe("authenticated and authorized routes", () => {
     describe("GET users/:username", () => {
-      it('should redirect to / when unauthorized', (done) => {
+      it("should redirect to / when unauthorized", (done) => {
         request(app)
-          .get('/users/aaronm')
+          .get("/users/aaronm")
           .expect(302)
           .expect({})
           .end((err) => {
             if (err) return done(err);
             done();
-        });
+          });
       });
-    })
+    });
     describe("DELETE users/:username", () => {
-      it('should redirect to / when unauthorized', (done) => {
+      it("should redirect to / when unauthorized", (done) => {
         request(app)
-          .delete('/users/aaronm')
+          .delete("/users/aaronm")
           .expect(302)
           .expect({})
           .end((err) => {
             if (err) return done(err);
             done();
-        });
+          });
       });
-    })
+    });
     describe("PATCH users/:username", () => {
-      it('should redirect to / when unauthorized', (done) => {
+      it("should redirect to / when unauthorized", (done) => {
         request(app)
-          .patch('/users/aaronm')
+          .patch("/users/aaronm")
           .expect(302)
           .expect({})
           .end((err) => {
             if (err) return done(err);
             done();
-        });
+          });
       });
-    })
+    });
   });
 });

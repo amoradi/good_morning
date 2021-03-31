@@ -27,7 +27,7 @@ setupPassport();
 
 // === MIDDLEWARE === //
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   session({
@@ -62,5 +62,4 @@ const server = app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
 
-
-module.exports = { app, server }
+module.exports = { app, server };

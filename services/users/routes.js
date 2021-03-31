@@ -5,6 +5,12 @@ const fakeDb = require("../../db");
 
 const router = express.Router();
 
+// User = {
+//   username: string;
+//   email: string;
+//   password: string;
+// }
+
 // you can only GET youself
 router.get("/users/:username", isAuthorized, (req, res) => {
   const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
@@ -12,12 +18,14 @@ router.get("/users/:username", isAuthorized, (req, res) => {
   if (foundUser) {
     res.status(200).json({ username: foundUser.username });
   } else {
-    res.status(404)
+    res.status(404);
   }
 });
 
 router.delete("/users/:username", isAuthorized, (req, res) => {
-  const foundIndex = fakeDb.indexOf((rec) => rec.username === req.params.username);
+  const foundIndex = fakeDb.indexOf(
+    (rec) => rec.username === req.params.username
+  );
   if (foundIndex > -1) {
     fakeDb.splice(foundIndex, 1);
   }
@@ -26,10 +34,11 @@ router.delete("/users/:username", isAuthorized, (req, res) => {
     // return deleted username
     res.status(200).json({ username: fakeDb[foundIndex].username });
   } else {
-    res.status(404)
+    res.status(404);
   }
 });
 
+// update a piece of User
 router.patch("/users/:username", isAuthorized, (req, res) => {
   const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
 
@@ -44,9 +53,8 @@ router.patch("/users/:username", isAuthorized, (req, res) => {
 
     res.status(200).json({ username: foundUser.username });
   } else {
-    res.status(404)
+    res.status(404);
   }
-
 });
 
 router.post(
@@ -56,7 +64,7 @@ router.post(
     const password = req.body.password;
     const foundUser = fakeDb.find((rec) => rec.username === username);
 
-    if (username === '' || username === undefined) {
+    if (username === "" || username === undefined) {
       req.flash("error", "Username must be at least 1 character");
       return res.redirect("/signup");
     }
@@ -74,7 +82,7 @@ router.post(
       username,
     });
 
-    res.status(201).json({ username })
+    res.status(201).json({ username });
   },
 
   passport.authenticate("login", {
