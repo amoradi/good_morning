@@ -1,5 +1,17 @@
 const { Pool } = require('pg')
 
+const config = {
+  db: {
+    user: '',
+    password: '',
+    database: '',
+    host: '',
+    port: '',
+    max: '',
+    idleTimeoutMillis: '',
+  }
+};
+
 const dbConfig = {
   user: config.db.user,
   password: config.db.password,

@@ -42,14 +42,14 @@ router.delete("/users/:username", isAuthorized, (req, res) => {
 
   if (foundIndex) {
     // return deleted username
-    res.status(200).json({ username: fakeDb[foundIndex].username });
+    res.status(204).json({ username: fakeDb[foundIndex].username });
   } else {
     res.status(404);
   }
 });
 
 // update a piece of User
-router.patch("/users/:username", isAuthorized, (req, res) => {
+router.put("/users/:username", isAuthorized, (req, res) => {
   const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
 
   if (foundUser) {
