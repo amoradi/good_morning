@@ -17,7 +17,7 @@ CREATE TABLE users (
 /* 
 
   Tracks asset **ownership and amount owned** not price.
-  Primary key denotes ownership -- in the form of a symbol-user pair.
+  Primary key denotes ownership -- in the form of a symbol-username pair.
 
   - symbol, user_username <PK>
   - user_username <FK>
@@ -37,8 +37,8 @@ CREATE TABLE holdings (
   Tracks price history for said asset
 
 */
-
 CREATE TABLE asset_history (
   symbol: varchar(10) NOT NULL UNIQUE PRIMARY KEY
   price_at_5pm_usd: [varchar(100), money][] NOT NULL /* [[date, price]] */
+  /* other timestamps?? */
 )
