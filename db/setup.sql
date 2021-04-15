@@ -7,7 +7,6 @@
 
 */
 
-
 CREATE TABLE users (
   email: varchar(100) NOT NULL UNIQUE,
   password: varchar(100) NOT NULL,
@@ -34,10 +33,14 @@ CREATE TABLE holdings (
 
 /*
 
-  Tracks price history for said asset
+  Tracks price history for said asset.
+
+  Asset price history is tracked based on ownership right now (holdings table). If a user
+  owns an asset, its price should be tracked. If no users own an asset, it should be removed
+  from this table.
 
 */
-CREATE TABLE asset_history (
+CREATE TABLE asset_price_history (
   symbol: varchar(10) NOT NULL UNIQUE PRIMARY KEY
   price_at_5pm_usd: [varchar(100), money][] NOT NULL /* [[date, price]] */
   /* other timestamps?? */
