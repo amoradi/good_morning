@@ -22,7 +22,7 @@ CREATE TABLE users (
   - user_username <FK>
 
 */
-CREATE TABLE holdings (
+CREATE TABLE user_holdings (
   symbol: varchar(10) NOT NULL,
   name: varchar(100) NOT NULL,
   category: varchar(100)[] NOT NULL,
