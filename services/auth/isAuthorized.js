@@ -4,6 +4,9 @@
 // user session username must match :username
 function isAuthorized(req, res, next) {
   // reading "req.user.username" from passport.session() (in index.js)
+  //
+  // I assume this is safe, comparing: 
+  // <something passport-owned (tamper-proof)> to <req.params (tamper-able)>
   const isSaidUser = !!(req.user && req.user.username === req.params.username);
 
   if (req.isAuthenticated() && isSaidUser) {

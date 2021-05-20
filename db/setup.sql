@@ -3,16 +3,19 @@
   Holds all SQL statements needed to model the app,
   in case it's ever needed for later use.
 
-  NOTE: varchar 100 & 10 used for consistancy
+  NOTE: varchar 100 & 10 used for consistency
 
-  TODO: array type is not implemented
+  COOL: buildup JSON object 
+  https://stackoverflow.com/questions/57332147/how-to-structure-nested-arrays-with-postgresql
 
 */
 
-CREATE TABLE users (
-  email: varchar(100) NOT NULL UNIQUE,
-  password: varchar(100) NOT NULL,
-  username: varchar(100) NOT NULL PRIMARY KEY
+CREATE TABLE IF NOT EXISTS users (
+  email varchar(100) NOT NULL UNIQUE,
+  password varchar(100) NOT NULL,
+  username varchar(100) NOT NULL PRIMARY KEY,
+  created_on TIMESTAMP NOT NULL DEFAULT NOW(),
+  last_updated TIMESTAMP
 );
 
 /* 
@@ -24,13 +27,13 @@ CREATE TABLE users (
   - owner <FK>
 
 */
-CREATE TABLE holdings (
-  symbol: varchar(10) NOT NULL,
-  name: varchar(100) NOT NULL,
+CREATE TABLE IF NOT EXISTS holdings (
+  symbol varchar(10) NOT NULL,
+  name varchar(100) NOT NULL,
   /* TODO: array type */
-  category: varchar(100)[] NOT NULL,
-  amount: decimal NOT NULL,
-  owner: varchar(100) NOT NULL REFERENCES users(username),
+  category varchar(100)[] NOT NULL,
+  amount decimal NOT NULL,
+  owner varchar(100) NOT NULL REFERENCES users(username),
   PRIMARY KEY(symbol, owner)
 )
 
@@ -45,9 +48,9 @@ CREATE TABLE holdings (
   from this table.
 
 */
-CREATE TABLE asset_price_history (
-  symbol: varchar(10) NOT NULL UNIQUE PRIMARY KEY
-  /* TODO: array type */
-  price_at_5pm_usd: [varchar(100), money][] NOT NULL /* [[date, price]] */
-  /* other timestamps?? */
+CREATE TABLE IF NOT EXISTS asset_price_history (
+  symbol varchar(10) NOT NULL UNIQUE PRIMARY KEY
+  /* [[date, price]] */
+  price_daily_in_usd [TIMESTAMP, numeric(15, 8)][] NOT NULL
+  /* add other timestamps?? */
 )

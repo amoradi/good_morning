@@ -54,10 +54,12 @@ router.put("/users/:username", isAuthorized, (req, res) => {
 
   if (foundUser) {
     if (req.body.password) {
+      // TODO: validate. should happen when integrating DB
       foundUser.password = req.body.password;
     }
 
     if (req.body.email) {
+       // TODO: validate. should happen when integrating DB
       foundUser.email = req.body.email;
     }
 

@@ -41,6 +41,9 @@ router.get("/signup", (req, res) => {
 `);
 });
 
+
+// === PROTECTED PAGES === //
+
 // - current holdings, holdings over time and aggregate. Hard-coded: news, weather goals
 // - edit assets link, log out link, profile link
 // - hits holdings service
