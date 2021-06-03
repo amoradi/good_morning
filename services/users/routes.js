@@ -2,7 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const isAuthorized = require("../auth/isAuthorized");
 const fakeDb = require("../../db");
-const db = require('../db')
+
 
 // app.get('/:id', (req, res, next) => {
 //   db.query('SELECT * FROM users WHERE id = $1', [req.params.id], (err, res) => {
@@ -69,6 +69,7 @@ router.put("/users/:username", isAuthorized, (req, res) => {
   }
 });
 
+// create a user
 router.post(
   "/users/create",
   (req, res) => {

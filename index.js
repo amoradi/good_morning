@@ -52,10 +52,10 @@ app.use((req, res, next) => {
 });
 
 // === ROUTES === //
-app.use(authRoutes);
+app.use('/api', authRoutes);
 app.use(pagesRoutes);
-app.use(usersRoutes);
-// app.use(holdingsRoutes);
+app.use('/api', usersRoutes);
+// app.use('/api', holdingsRoutes);
 
 // === START SERVER === //
 const server = app.listen(port, () => {

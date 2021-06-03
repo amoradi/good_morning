@@ -18,6 +18,12 @@ const router = require("../../pageRoutes");
 
 */
 
+/*
+
+  NOTE: holdings are are always _owned_ -- they are tied to a user.
+
+*/
+
 // GET all the holdings you own
 router.get("/holdings/:username", isAuthorized, (req, res) => {
   const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
@@ -29,6 +35,7 @@ router.get("/holdings/:username", isAuthorized, (req, res) => {
   }
 });
 
+// create a holding 
 router.post("/holdings/:username/create", isAuthorized, (req, res) => {
   const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
   const holdings = []; // TODO: find holdings by user
@@ -53,6 +60,7 @@ router.post("/holdings/:username/create", isAuthorized, (req, res) => {
   }
 });
 
+// delete a holding
 router.delete("/holdings/:username/delete", isAuthorized, (req, res) => {
   const symbol = req.body.symbol;
 
@@ -68,6 +76,8 @@ router.delete("/holdings/:username/delete", isAuthorized, (req, res) => {
   }
 });
 
+// update a holding
+// TODO: patch, put or post?
 router.patch("/holdings/:username/update", isAuthorized, (req, res) => {
   const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
   const foundHolding = ""; // find holding.

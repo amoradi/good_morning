@@ -10,7 +10,7 @@ describe("users service", () => {
   describe("POST users/create", () => {
     it("should create a user", (done) => {
       request(app)
-        .post("/users/create")
+        .post("/api/users/create")
         .send({ username: "foo", password: "french" })
         .set("Accept", "application/json")
         .expect("Content-Type", /json/)
@@ -25,7 +25,7 @@ describe("users service", () => {
     it("should not create a user when username is invalid and redirect to /signup", (done) => {
       // empty string username
       request(app)
-        .post("/users/create")
+        .post("/api/users/create")
         .send({ username: "", password: "french" })
         .set("Accept", "application/json")
         .expect(302)
@@ -36,7 +36,7 @@ describe("users service", () => {
 
       // undefined username
       request(app)
-        .post("/users/create")
+        .post("/api/users/create")
         .send({ username: undefined, password: "french" })
         .set("Accept", "application/json")
         .expect(302)
@@ -49,7 +49,7 @@ describe("users service", () => {
 
     it("should not create a user when it already exists and redirect to /signup", (done) => {
       request(app)
-        .post("/users/create")
+        .post("/api/users/create")
         .send({ username: "foo", password: "french" })
         .set("Accept", "application/json")
         .expect(302)
@@ -71,7 +71,7 @@ describe("users service", () => {
     describe("GET users/:username", () => {
       it("should redirect to / when unauthorized", (done) => {
         request(app)
-          .get("/users/aaronm")
+          .get("/api/users/aaronm")
           .expect(302)
           .expect({})
           .end((err) => {
@@ -83,7 +83,7 @@ describe("users service", () => {
     describe("DELETE users/:username", () => {
       it("should redirect to / when unauthorized", (done) => {
         request(app)
-          .delete("/users/aaronm")
+          .delete("/api/users/aaronm")
           .expect(302)
           .expect({})
           .end((err) => {
@@ -92,10 +92,10 @@ describe("users service", () => {
           });
       });
     });
-    describe("PATCH users/:username", () => {
+    describe("PUT users/:username", () => {
       it("should redirect to / when unauthorized", (done) => {
         request(app)
-          .patch("/users/aaronm")
+          .put("/api/users/aaronm")
           .expect(302)
           .expect({})
           .end((err) => {
