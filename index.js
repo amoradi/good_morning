@@ -1,3 +1,6 @@
+
+require('dotenv').config();
+
 const bodyParser = require("body-parser");
 const express = require("express");
 const flash = require("connect-flash");

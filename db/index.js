@@ -1,28 +1,16 @@
 const { Pool } = require('pg')
 
 const config = {
-  db: {
-    user: '',
-    password: '',
-    database: '',
-    host: '',
-    port: '',
-    max: '',
-    idleTimeoutMillis: '',
-  }
-};
-
-const dbConfig = {
-  user: config.db.user,
-  password: config.db.password,
-  database: config.db.database,
-  host: config.db.host,
-  port: config.db.port,
-  max: config.db.max,
-  idleTimeoutMillis: config.db.idleTimeoutMillis,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  max: process.env.DB_MAX,
+  idleTimeoutMillis: process.env.DB_IDLE_TIMEOUT
 }
 
-const pool = new Pool();
+const pool = new Pool(config);
 
 module.exports = {
   query: (text, params, callback) => {
