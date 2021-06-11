@@ -2,7 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const isAuthorized = require("../auth/isAuthorized");
 const fakeDb = require("../../db");
-
+const db = require("../../db");
 
 // app.get('/:id', (req, res, next) => {
 //   db.query('SELECT * FROM users WHERE id = $1', [req.params.id], (err, res) => {
@@ -23,13 +23,25 @@ const router = express.Router();
 
 // you can only GET youself
 router.get("/users/:username", isAuthorized, (req, res) => {
-  const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
+  const query = {
+    text: 'SELECT * FROM users WHERE username = $1',
+    values: [req.params.username],
+  };
+  
+  db.query(query, (err, res) => {
+    if (err) {
+      return next(err)
+    }
 
-  if (foundUser) {
-    res.status(200).json({ username: foundUser.username });
-  } else {
-    res.status(404);
-  }
+    const foundUser = res.rows[0];
+
+    if (foundUser) {
+      res.status(200).json({ username: foundUser.username });
+    } else {
+      res.status(404);
+    }
+  })
+
 });
 
 router.delete("/users/:username", isAuthorized, (req, res) => {

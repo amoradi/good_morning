@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS users (
   email varchar(100) NOT NULL UNIQUE,
   password varchar(100) NOT NULL,
   username varchar(100) NOT NULL PRIMARY KEY,
-  created_on TIMESTAMP NOT NULL DEFAULT NOW(),
-  last_updated TIMESTAMP
+  created_on TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_updated TIMESTAMPTZ
 );
 
 /* 
@@ -30,12 +30,11 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS holdings (
   symbol varchar(10) NOT NULL,
   name varchar(100) NOT NULL,
-  /* TODO: array type */
   category varchar(100)[] NOT NULL,
   amount decimal NOT NULL,
   owner varchar(100) NOT NULL REFERENCES users(username),
   PRIMARY KEY(symbol, owner)
-)
+);
 
 /*
 
@@ -48,9 +47,14 @@ CREATE TABLE IF NOT EXISTS holdings (
   from this table.
 
 */
+
+CREATE TYPE price_at_time AS (
+  price numeric(15, 8),
+  time TIMESTAMPTZ
+);
+
 CREATE TABLE IF NOT EXISTS asset_price_history (
-  symbol varchar(10) NOT NULL UNIQUE PRIMARY KEY
-  /* [[date, price]] */
-  price_daily_in_usd [TIMESTAMP, numeric(15, 8)][] NOT NULL
+  symbol varchar(10) NOT NULL UNIQUE PRIMARY KEY,
+  price_daily_in_usd price_at_time[] NOT NULL
   /* add other timestamps?? */
 )
