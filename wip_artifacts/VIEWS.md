@@ -17,7 +17,7 @@
 
 `signup`
 
-- /signup
+- /sign-up
 - users/create-account
 - create new account
 - username, email, pw inputs

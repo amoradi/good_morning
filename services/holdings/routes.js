@@ -4,8 +4,7 @@ const express = require("express");
 const passport = require("passport");
 const isAuthorized = require("../auth/isAuthorized");
 const fakeDb = require("../../db");
-const router = require("../../pageRoutes");
-
+const router = express.Router();
 /*
 
   type Holding = {

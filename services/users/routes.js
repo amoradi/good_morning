@@ -1,44 +1,26 @@
+const bcrypt = require('bcrypt');
 const express = require("express");
 const passport = require("passport");
 const isAuthorized = require("../auth/isAuthorized");
 const fakeDb = require("../../db");
 const db = require("../../db");
 
-// app.get('/:id', (req, res, next) => {
-//   db.query('SELECT * FROM users WHERE id = $1', [req.params.id], (err, res) => {
-//     if (err) {
-//       return next(err)
-//     }
-//     res.send(res.rows[0])
-//   })
-// })
-
 const router = express.Router();
 
-// User = {
-//   username: string;
-//   email: string;
-//   password: string;
-// }
-
 // you can only GET youself
-router.get("/users/:username", isAuthorized, (req, res) => {
-  const query = {
-    text: 'SELECT * FROM users WHERE username = $1',
-    values: [req.params.username],
-  };
-  
-  db.query(query, (err, res) => {
+router.get("/users/:username", isAuthorized, (req, res) => {  
+  db.query(db.getUser(req.params.username), (err, res) => {
     if (err) {
-      return next(err)
-    }
-
-    const foundUser = res.rows[0];
-
-    if (foundUser) {
-      res.status(200).json({ username: foundUser.username });
-    } else {
+      req.flash("error", err); 
       res.status(404);
+    } else {
+      const foundUser = res.rows[0];
+
+      if (foundUser) {
+        res.status(200).json({ username: foundUser.username });
+      } else {
+        res.status(404);
+      }
     }
   })
 
@@ -85,34 +67,62 @@ router.put("/users/:username", isAuthorized, (req, res) => {
 router.post(
   "/users/create",
   (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const foundUser = fakeDb.find((rec) => rec.username === username);
-
+    const { email, username, password } = req.body;
+    
     if (username === "" || username === undefined) {
       req.flash("error", "Username must be at least 1 character");
-      return res.redirect("/signup");
+      return res.redirect("/sign-up");
     }
 
-    if (foundUser) {
-      req.flash("error", "User already exists");
-      return res.redirect("/signup");
-    }
+    db.query(db.getUser(username), (err, res) => {
+      if (err) {
+        req.flash("error", err);
+        return res.redirect("/sign-up");
+      }
 
-    // success
-    fakeDb.push({
-      email: "",
-      id: "",
-      password, // TODO: salt
-      username,
+      const foundUser = res.rows[0];
+
+      if (foundUser) {
+        req.flash("error", "User already exists");
+        return res.redirect("/sign-up");
+      }
+
+      // success
+      // fakeDb.push({
+      //   email: "",
+      //   password, // TODO PW: salt
+      //   username,
+      //   created_on,
+      //   last_updated
+      // });
+
+      // TODO: insert new user in user table.
+      const now = Date.now();
+      const saltRounds = 10;
+
+      bcrypt.genSalt(saltRounds, function(err, salt) {
+        bcrypt.hash(password, salt, function(err, hash) {
+          const insertUser = {
+            text: 'INSERT INTO users (email, password, username, created_on, last_updated) VALUES ($1, $2, $3, $4, $5)',
+            values: [email, hash, username, now, now]
+          };
+
+          db.query(insertUser, (err, res) => {
+            if (err) {
+              req.flash("error", err);
+              return res.redirect("/sign-up");
+            } else {
+              res.status(201).json({ username });
+            }
+          });
+        });
+      });
     });
-
-    res.status(201).json({ username });
   },
 
   passport.authenticate("login", {
     successRedirect: "/",
-    failureRedirect: "/signup",
+    failureRedirect: "/sign-up",
     failureFlash: true,
   })
 );

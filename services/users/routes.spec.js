@@ -22,7 +22,7 @@ describe("users service", () => {
         });
     });
 
-    it("should not create a user when username is invalid and redirect to /signup", (done) => {
+    it("should not create a user when username is invalid and redirect to /sign-up", (done) => {
       // empty string username
       request(app)
         .post("/api/users/create")
@@ -30,7 +30,7 @@ describe("users service", () => {
         .set("Accept", "application/json")
         .expect(302)
         .end((err, res) => {
-          should(res.headers.location).equal("/signup");
+          should(res.headers.location).equal("/sign-up");
           if (err) return done(err);
         });
 
@@ -41,20 +41,20 @@ describe("users service", () => {
         .set("Accept", "application/json")
         .expect(302)
         .end((err, res) => {
-          should(res.headers.location).equal("/signup");
+          should(res.headers.location).equal("/sign-up");
           if (err) return done(err);
           done();
         });
     });
 
-    it("should not create a user when it already exists and redirect to /signup", (done) => {
+    it("should not create a user when it already exists and redirect to /sign-up", (done) => {
       request(app)
         .post("/api/users/create")
         .send({ username: "foo", password: "french" })
         .set("Accept", "application/json")
         .expect(302)
         .end((err, res) => {
-          should(res.headers.location).equal("/signup");
+          should(res.headers.location).equal("/sign-up");
           if (err) return done(err);
           done();
         });

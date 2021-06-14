@@ -37,9 +37,9 @@ router.get("/sign-up", (req, res) => {
   ${flashMessage(res.locals.errors)}
   <h1>sign up</h1>
   <form id="form" action="/api/users/create" method="post">
-    <input type="text" placeholder="username"></input>
-    <input type="text" placeholder="email"></input>
-    <input type="password" placeholder="password"></input>
+    <input type="text" placeholder="username" name="username"></input>
+    <input type="text" placeholder="email" name="email"></input>
+    <input type="password" placeholder="password" name="password"></input>
     <input type="submit" value="create account">
   </form>
   <br />
@@ -72,7 +72,7 @@ router.get("/my-holdings", isAuthenticated, (req, res) => {
 router.get("/edit", isAuthenticated, (req, res) => {
   // get user info, GET /api/users/:username
   // get user holdings, GET /api/holdings/:username
-  // -> populate the form and HTML with this stuff ^
+  // -> populate the form and HTML with this stuff ^ 
 
   // on submit, PUT /api/users/:username (update user)
   // ensure ajax reqest has necessary passport data (to confirm isAuthenticated)

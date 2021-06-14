@@ -25,12 +25,19 @@ module.exports = {
     https://node-postgres.com/features/pooling
 
   */
-  query: (text, params, callback) => {
+  query: (query, callback) => {
     //const start = Date.now()
-    return pool.query(text, params, (err, res) => {
-      const duration = Date.now() - start
-      //console.log('executed query', { text, duration, rows: res.rowCount })
-      callback(err, res)
-    })
+    return pool.query(query, (err, res) => {
+      // const duration = Date.now() - start
+      // console.log('executed query', { text, duration, rows: res.rowCount })
+      callback(err, res);
+    });
+  },
+  // @return query object
+  getUser(username) {
+    return {
+      text: 'SELECT * FROM users WHERE username = $1',
+      values: [username],
+    }
   },
 }
