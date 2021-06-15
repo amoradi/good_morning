@@ -76,8 +76,7 @@ const server = app.listen(port, () => {
   //     });
   //   }
   // });
-
-  console.log(routes);
+  // console.log(routes);
 });
 
 module.exports = { app, server };
