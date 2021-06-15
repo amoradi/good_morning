@@ -9,12 +9,12 @@ const router = express.Router();
 
 // you can only GET youself
 router.get("/users/:username", isAuthorized, (req, res) => {  
-  db.query(db.getUser(req.params.username), (err, res) => {
+  db.query(db.getUser(req.params.username), (err, dbRes) => {
     if (err) {
       req.flash("error", err); 
       res.status(404);
     } else {
-      const foundUser = res.rows[0];
+      const foundUser = dbRes.rows[0];
 
       if (foundUser) {
         res.status(200).json({ username: foundUser.username });
@@ -74,30 +74,20 @@ router.post(
       return res.redirect("/sign-up");
     }
 
-    db.query(db.getUser(username), (err, res) => {
+    db.query(db.getUser(username), (err, dbRes) => {
       if (err) {
-        req.flash("error", err);
+        req.flash("error", err.toString());
         return res.redirect("/sign-up");
       }
 
-      const foundUser = res.rows[0];
+      const foundUser = dbRes.rows[0];
 
       if (foundUser) {
         req.flash("error", "User already exists");
         return res.redirect("/sign-up");
       }
 
-      // success
-      // fakeDb.push({
-      //   email: "",
-      //   password, // TODO PW: salt
-      //   username,
-      //   created_on,
-      //   last_updated
-      // });
-
-      // TODO: insert new user in user table.
-      const now = Date.now();
+      const now = new Date().toISOString();
       const saltRounds = 10;
 
       bcrypt.genSalt(saltRounds, function(err, salt) {
@@ -107,9 +97,9 @@ router.post(
             values: [email, hash, username, now, now]
           };
 
-          db.query(insertUser, (err, res) => {
+          db.query(insertUser, (err) => {
             if (err) {
-              req.flash("error", err);
+              req.flash("error", err.toString());
               return res.redirect("/sign-up");
             } else {
               res.status(201).json({ username });

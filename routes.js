@@ -19,6 +19,7 @@ router.get("/login", (req, res) => {
       <form id="form" action="/api/login" method="post">
         <input type="text" placeholder="username" name="username"></input>
         <input type="password" placeholder="password" name="password"></input>
+        <!-- TODO: confirm password input -->
         <input type="submit" value="Submit">
       </form>
       <br />
