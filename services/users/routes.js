@@ -4,7 +4,7 @@ const passport = require("passport");
 const isAuthorized = require("../auth/isAuthorized");
 const fakeDb = require("../../db");
 const db = require("../../db");
-
+// TODO: npm install express-validator
 const router = express.Router();
 
 // you can only GET youself
@@ -64,6 +64,7 @@ router.put("/users/:username", isAuthorized, (req, res) => {
 });
 
 // create a user
+// NOTE: this route is impure, in that it is coupled to the sign-up-login page flow
 router.post(
   "/users/create",
   (req, res) => {
@@ -71,12 +72,20 @@ router.post(
     
     if (username === "" || username === undefined) {
       req.flash("error", "Username must be at least 1 character");
+      // side effect
+      return res.redirect("/sign-up");
+    }
+
+    if (password === "" || password === undefined) {
+      req.flash("error", "Password must be at least 1 character");
+      // side effect
       return res.redirect("/sign-up");
     }
 
     db.query(db.getUser(username), (err, dbRes) => {
       if (err) {
         req.flash("error", err.toString());
+        // side effect
         return res.redirect("/sign-up");
       }
 
@@ -100,21 +109,18 @@ router.post(
           db.query(insertUser, (err) => {
             if (err) {
               req.flash("error", err.toString());
+              // side effect
               return res.redirect("/sign-up");
             } else {
-              res.status(201).json({ username });
+              // side effect
+              req.flash("info", `Success, created user: ${username}`);
+              res.redirect('/login');
             }
           });
         });
       });
     });
   },
-
-  passport.authenticate("login", {
-    successRedirect: "/",
-    failureRedirect: "/sign-up",
-    failureFlash: true,
-  })
 );
 
 module.exports = router;

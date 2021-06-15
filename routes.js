@@ -5,6 +5,8 @@ const isAuthenticated = require("./services/auth/isAuthenticated");
 const router = express.Router();
 const flashMessage = (message) =>
   `<p style="color:#ff0000;font-size:12px">${message}</p>`;
+const flashInfoMessage = (message) =>
+  `<p style="color:#02ff00;font-size:12px">${message}</p>`;
 
 // === PAGES === //
 
@@ -15,6 +17,7 @@ router.get("/login", (req, res) => {
     // else serve login form
     res.send(`
       ${flashMessage(res.locals.errors)}
+      ${flashInfoMessage(res.locals.infos)}
       <h1>login</h1>
       <form id="form" action="/api/login" method="post">
         <input type="text" placeholder="username" name="username"></input>
