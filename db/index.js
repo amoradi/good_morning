@@ -40,4 +40,11 @@ module.exports = {
       values: [username],
     }
   },
+  // @return query object
+  getHoldings(username) {
+    return {
+      text: 'SELECT * FROM holdings WHERE owner = $1',
+      values: [username],
+    }
+  },
 }

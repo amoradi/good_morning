@@ -1,5 +1,5 @@
 const express = require("express");
-
+const db = require("./db");
 const isAuthenticated = require("./services/auth/isAuthenticated");
 
 const router = express.Router();
@@ -62,13 +62,37 @@ router.get("/sign-up", (req, res) => {
 router.get("/", isAuthenticated, (req, res) => {
   res.redirect("/my-holdings");
 });
-router.get("/my-holdings", isAuthenticated, (req, res) => {
-  // /api/holdings/:username/get
-  // etc.
+router.get("/my-holdings", isAuthenticated, (req, res) => { 
+  db.query(db.getHoldings(req.user.username), (err, dbRes) => {
+    const present = (holdings) => {
+      // symbol varchar(10) NOT NULL,
+      // name varchar(100) NOT NULL,
+      // category varchar(100)[] NOT NULL,
+      // amount decimal NOT NULL,
+      // owner varchar(100) NOT NULL REFERENCES users(username),
+      // PRIMARY KEY(symbol, owner)
 
-  res.send(`
-    <h1>my holdings</h1>
-  `);
+      const html = holdings.map((h) => {
+        return `
+          <div>
+            <div>${h.symbol}</div>
+            <div>${h.name}</div>
+            <div>${h.amount}</div>
+            <div>${h.category}</div>
+          </div>
+        `
+      });
+
+      return html.join();
+    }
+    const content = err ? flashMessage(err.toString()) : present(dbRes.rows);
+
+    res.send(`
+      <h1>my holdings</h1>
+      ${content}
+      <a href="/logout">logout</a>
+    `);
+  });
 });
 
 // edit profile and holdings...
@@ -94,7 +118,13 @@ router.get("/edit", isAuthenticated, (req, res) => {
 
   <h2>my holdings</h2>
   <form id="form">
-    <div>remove holding link + button confirm, edit assets amt input + button save</div>
+    <!-- 
+      list all my current assets in fields. 
+      make adding an asset (new row) possible
+      make removing a row possible
+    
+      on submit, filter out empty rows and SET ALL assets to user (clean sweep and set)
+    -->
   </form>
 `);
 });

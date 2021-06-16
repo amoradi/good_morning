@@ -7,13 +7,13 @@ const fakeDb = require("../../db");
 const router = express.Router();
 /*
 
-  type Holding = {
-    symbol: string; user + symbol = <primary key> 
-    name: string;
-    category: string[];
-    denomination: number;
-    username: string; User.username <foreign key>
-  }
+  Holding:
+  symbol varchar(10) NOT NULL,
+  name varchar(100) NOT NULL,
+  category varchar(100)[] NOT NULL,
+  amount decimal NOT NULL,
+  owner varchar(100) NOT NULL REFERENCES users(username),
+  PRIMARY KEY(symbol, owner)
 
 */
 
@@ -25,13 +25,13 @@ const router = express.Router();
 
 // GET all the holdings you own
 router.get("/holdings/:username", isAuthorized, (req, res) => {
-  const foundUser = fakeDb.find((rec) => rec.username === req.params.username);
-  const holdings = []; // TODO: find holdings by user
-  if (foundUser) {
-    res.status(200).json({ holdings: [] });
-  } else {
-    res.status(404);
-  }
+  db.query(db.getHoldings(req.params.username), (err, dbRes) => {
+    if (err) {
+      res.status(500);
+    }
+
+    res.status(200).json({ holdings: dbRes.rows });
+  });
 });
 
 // create a holding 

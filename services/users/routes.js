@@ -7,7 +7,7 @@ const db = require("../../db");
 // TODO: npm install express-validator
 const router = express.Router();
 
-// you can only GET youself
+// you can only GET yourself
 router.get("/users/:username", isAuthorized, (req, res) => {  
   db.query(db.getUser(req.params.username), (err, dbRes) => {
     if (err) {
