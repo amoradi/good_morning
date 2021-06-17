@@ -4,7 +4,7 @@ function isAuthenticated(req, res, next) {
     next();
   } else {
     req.flash("errors", "You must be logged in to see this page.");
-    res.redirect("./login");
+    res.redirect("/login");
   }
 }
 

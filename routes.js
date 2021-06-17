@@ -37,6 +37,7 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/sign-up", (req, res) => {
+  console.log('wtf');
   res.send(`
   ${flashMessage(res.locals.errors)}
   <h1>sign up</h1>
@@ -78,7 +79,7 @@ router.get("/my-holdings", isAuthenticated, (req, res) => {
             <div>${h.symbol}</div>
             <div>${h.name}</div>
             <div>${h.amount}</div>
-            <div>${h.category}</div>
+            <div>${h.category.join("  ")}</div>
           </div>
         `
       });
@@ -90,6 +91,7 @@ router.get("/my-holdings", isAuthenticated, (req, res) => {
     res.send(`
       <h1>my holdings</h1>
       ${content}
+      <a href="/edit"">edit</a>
       <a href="/logout">logout</a>
     `);
   });
@@ -98,35 +100,86 @@ router.get("/my-holdings", isAuthenticated, (req, res) => {
 // edit profile and holdings...
 // add, remove holdings and change amounts
 router.get("/edit", isAuthenticated, (req, res) => {
-  // get user info, GET /api/users/:username
-  // get user holdings, GET /api/holdings/:username
-  // -> populate the form and HTML with this stuff ^ 
+  db.query(db.getUser(req.user.username), (err, userRes) => {
+    const user = userRes.rows[0];
 
-  // on submit, PUT /api/users/:username (update user)
-  // ensure ajax reqest has necessary passport data (to confirm isAuthenticated)
-  //
-  res.send(`
-  ${flashMessage(res.locals.errors)}
-  <h1>edit</h1>
-  <h2>my profile</h2>
-  <form id="form">
-    <input type="text" placeholder="username"></input>
-    <input type="text" placeholder="email"></input>
-    <input type="password" placeholder="password"></input>
-    <input type="submit" value="Submit">
-  </form>
+    // start the callback fun =)
+    // TODO: if you have time, convert to async/await
+    db.query(db.getHoldings(req.user.username), (err, holdingsRes) => {
+      let holdingsCnt = 0;
+      const presentHoldings = () => {
+        const html = holdingsRes.rows.map((h, i) => {
+          `<div>
+            <input type="text" name="symbol-${i}" value="${h.symbol}">
+            <input type="text" name="name-${i}" value="${h.name}">
+            <input type="text" name="amount-${i}" value="${h.amount}">
+            <input type="text" name="category-${i}" value="${h.category.join("  ")}">
+          </div>`
+        });
 
-  <h2>my holdings</h2>
-  <form id="form">
-    <!-- 
-      list all my current assets in fields. 
-      make adding an asset (new row) possible
-      make removing a row possible
-    
-      on submit, filter out empty rows and SET ALL assets to user (clean sweep and set)
-    -->
-  </form>
-`);
+        holdingsCnt = html.length;
+        return html.join();
+      }
+      const addNewHolding = () => {
+        return `<button type="button" id="add-holding" onclick="injectNewHoldingRow()">add holding</button>`;
+      }
+
+      res.send(`
+        ${flashMessage(res.locals.errors)}
+        ${flashInfoMessage(res.locals.infos)}
+        <h1>edit</h1>
+        <h2>my profile</h2>
+        ${user && `<form id="form" action="/api/users/${user.username}" method="post">
+          <input type="text" placeholder="username" readonly name="username" value="${user.username}">
+          <input type="text" placeholder="email" name="email" value="${user.email}">
+          <input type="password" placeholder="password" name="password" value="">
+          <input type="password" placeholder="confirm password" name="password_confirm" value="">
+          <p>
+            <input type="submit" value="Submit">
+          </p>
+        </form>`}
+
+        <h2>my holdings</h2>
+        <script>
+          let cnt  = ${holdingsCnt};
+          
+          function injectNewHoldingRow() {
+            const el = document.getElementById('add-holding');
+            
+            if (el) {
+              const div = document.createElement('div');
+              const i = cnt + 1;
+
+              div.innerHTML = \`
+                <input type="text" name="symbol-\${i}" placeholder="symbol">
+                <input type="text" name="name-\${i}" placeholder="name">
+                <input type="text" name="amount-\${i}" placeholder="amount">
+                <input type="text" name="category-\${i}" placeholder="category">
+              \`;
+              cnt = i;
+              el.insertAdjacentElement('beforebegin', div);
+              console.log(cnt);
+            }
+          }
+        </script>
+        <form id="form-holdings" action="/api/holdings" method="post">
+          ${presentHoldings()}
+          ${addNewHolding()}
+          <!-- 
+          
+            list all my current assets in fields. 
+            make adding an asset (new row) possible
+            make removing a row possible
+          
+            on submit, filter out empty rows and SET ALL assets to user (clean sweep and set)
+          -->
+          <input type="submit" value="submit update">
+        </form>
+        <a href="/my-holdings">my holdings</a>
+        <a href="/logout">logout</a>
+      `);
+    });
+  });
 });
 
 module.exports = router;
